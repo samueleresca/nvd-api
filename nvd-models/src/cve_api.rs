@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 #[serde(rename = "config")]
 #[serde(deny_unknown_fields)]
@@ -97,7 +99,7 @@ pub struct CveItem {
 }
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 #[serde(rename = "cvss-v2")]
-#[serde(deny_unknown_fields)]
+//#[serde(deny_unknown_fields)]
 pub struct CvssV2 {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "acInsufInfo")]
@@ -105,8 +107,8 @@ pub struct CvssV2 {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "baseSeverity")]
     pub base_severity: Option<String>,
-    #[serde(rename = "cvssData")]
-    pub cvss_data: CvssV20Json,
+    //#[serde(rename = "cvssData")]
+    //pub cvss_data: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "exploitabilityScore")]
     pub exploitability_score: Option<DefSubscore>,
@@ -131,10 +133,10 @@ pub struct CvssV2 {
 }
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 #[serde(rename = "cvss-v30")]
-#[serde(deny_unknown_fields)]
+//#[serde(deny_unknown_fields)]
 pub struct CvssV30 {
-    #[serde(rename = "cvssData")]
-    pub cvss_data: CvssV30Json,
+    //#[serde(rename = "cvssData")]
+    //pub cvss_data: CvssV30Json,
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "exploitabilityScore")]
     pub exploitability_score: Option<DefSubscore>,
@@ -147,10 +149,10 @@ pub struct CvssV30 {
 }
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 #[serde(rename = "cvss-v31")]
-#[serde(deny_unknown_fields)]
+//#[serde(deny_unknown_fields)]
 pub struct CvssV31 {
-    #[serde(rename = "cvssData")]
-    pub cvss_data: CvssV31Json,
+    //#[serde(rename = "cvssData")]
+    //pub cvss_data: Any,
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "exploitabilityScore")]
     pub exploitability_score: Option<DefSubscore>,
@@ -217,7 +219,7 @@ pub struct Weakness {
 }
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub struct Schema {
+pub struct Response {
     pub format: String,
     #[serde(rename = "resultsPerPage")]
     pub results_per_page: i64,

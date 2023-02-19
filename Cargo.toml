@@ -4,7 +4,11 @@ version = "0.1.0"
 authors = ["Samuele Resca <samuele.resca@gmail.com>"]
 edition = "2021"
 
+[dependencies.nvd_models]
+path = "./nvd-models/"
+
 [dependencies]
+serde = { version = "1.0", features = ["derive"] }
 async-trait = "0.1.64"
 chrono = "0.4"
 percent-encoding = "2.2.0"

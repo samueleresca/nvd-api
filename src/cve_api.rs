@@ -2,8 +2,8 @@ use std::fmt;
 
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
+use nvd_models::cve_api::Response;
 use percent_encoding::{percent_encode_byte, utf8_percent_encode, AsciiSet, CONTROLS};
-use reqwest::Response;
 
 pub enum VersionType {
     Including,
@@ -471,7 +471,7 @@ impl Request<Response> for CVERequest {
             None => {}
         }
 
-        builder.send().await
+        Ok(builder.send().await?.json::<Response>().await?)
     }
 }
 
@@ -548,16 +548,13 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn send_email_fires_a_request_to_base_url() {
+    async fn cve_request_execute_and_deserialize_correctly() {
         // Arrange
         let mock_server = MockServer::start().await;
         let test_data: String = fs::read_to_string("src/test_data/response.json").unwrap();
 
         Mock::given(any())
-            .respond_with(
-                ResponseTemplate::new(200)
-                .set_body_json(test_data)
-            )
+            .respond_with(ResponseTemplate::new(200).set_body_string(test_data))
             .expect(1)
             .mount(&mock_server)
             .await;
@@ -570,6 +567,30 @@ mod tests {
             .await;
 
         // Assert
-        assert!(result.is_ok())
+        assert!(result.is_ok());
+        let vulnerabilities = result.ok().unwrap().vulnerabilities;
+        assert_eq!(vulnerabilities.len(), 1);
+        assert_eq!(vulnerabilities[0].cve.id, "CVE-2019-1010218");
+    }
+
+    #[tokio::test]
+    async fn cve_request_handle_4xx_error() {
+        // Arrange
+        let mock_server = MockServer::start().await;
+        Mock::given(any())
+            .respond_with(ResponseTemplate::new(403))
+            .expect(1)
+            .mount(&mock_server)
+            .await;
+
+        // Act
+        let result = CVERequest::create(reqwest::Client::new())
+            .override_base_url(mock_server.uri().to_string())
+            .with_cve_id("CVE-1993-3".to_owned())
+            .execute()
+            .await;
+
+        // Assert
+        assert!(result.is_err());
     }
 }
