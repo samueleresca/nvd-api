@@ -3,7 +3,7 @@ use std::fmt;
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use nvd_models::cve_api::Response;
-use percent_encoding::{percent_encode_byte, utf8_percent_encode, AsciiSet, CONTROLS};
+use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
 
 pub enum VersionType {
     Including,
@@ -34,7 +34,7 @@ const FRAGMENT: &AsciiSet = &CONTROLS.add(b' ').add(b'"').add(b'<').add(b'>').ad
 fn build_kv(name: &str, value: &str) -> String {
     let mut str: String = String::from(name);
     str.push_str(ASSIGNER);
-    str.push_str(&value);
+    str.push_str(value);
     str.push_str(DELIMITER);
 
     str
@@ -88,7 +88,7 @@ pub struct CVERequest {
 impl CVERequest {
     pub fn create(http_client: reqwest::Client) -> Self {
         Self {
-            http_client: http_client,
+            http_client,
             base_url: CVE_API_BASE_URL.to_owned(),
             api_key: None,
             cpe_name: None,
@@ -213,7 +213,7 @@ impl CVERequest {
         self
     }
 
-    pub fn with_published__date_range(mut self, start: DateTime<Utc>, end: DateTime<Utc>) -> Self {
+    pub fn with_published_date_range(mut self, start: DateTime<Utc>, end: DateTime<Utc>) -> Self {
         self.pubStartDate = Some(start);
         self.pubEndDate = Some(end);
         self
@@ -258,49 +258,49 @@ impl fmt::Display for CVERequest {
 
         match &self.cpe_name {
             Some(value) => {
-                str.push_str(&build_kv("cpeName", &value));
+                str.push_str(&build_kv("cpeName", value));
             }
             _ => {}
         }
 
         match &self.cve_id {
             Some(value) => {
-                str.push_str(&build_kv("cveId", &value));
+                str.push_str(&build_kv("cveId", value));
             }
             _ => {}
         }
 
         match &self.cvss_v2_metrics {
             Some(value) => {
-                str.push_str(&build_kv("cvssV2Metrics", &value));
+                str.push_str(&build_kv("cvssV2Metrics", value));
             }
             _ => {}
         }
 
         match &self.cvss_v2_severity {
             Some(value) => {
-                str.push_str(&build_kv("cvssV2Severity", &value));
+                str.push_str(&build_kv("cvssV2Severity", value));
             }
             _ => {}
         }
 
         match &self.cvss_v3_metrics {
             Some(value) => {
-                str.push_str(&build_kv("cvssV3Metrics", &value));
+                str.push_str(&build_kv("cvssV3Metrics", value));
             }
             _ => {}
         }
 
         match &self.cvss_v3_severity {
             Some(value) => {
-                str.push_str(&build_kv("cvssV3Severity", &value));
+                str.push_str(&build_kv("cvssV3Severity", value));
             }
             _ => {}
         }
 
         match &self.cwe_id {
             Some(value) => {
-                str.push_str(&build_kv("cweId", &value));
+                str.push_str(&build_kv("cweId", value));
             }
             _ => {}
         }
@@ -349,7 +349,7 @@ impl fmt::Display for CVERequest {
 
         match &self.keywordSearch {
             Some(value) => {
-                str.push_str(&build_kv("keywordSearch", &value));
+                str.push_str(&build_kv("keywordSearch", value));
             }
             _ => {}
         }
@@ -370,7 +370,7 @@ impl fmt::Display for CVERequest {
 
         match self.noRejected {
             Some(_) => {
-                str.push_str(&&build_single("noRejected"));
+                str.push_str(&build_single("noRejected"));
             }
             _ => {}
         }
@@ -405,14 +405,14 @@ impl fmt::Display for CVERequest {
 
         match &self.sourceIdentifier {
             Some(value) => {
-                str.push_str(&build_kv("sourceIdentifier", &value));
+                str.push_str(&build_kv("sourceIdentifier", value));
             }
             _ => {}
         }
 
         match &self.versionStart {
             Some(value) => {
-                str.push_str(&build_kv("versionStart", &value));
+                str.push_str(&build_kv("versionStart", value));
             }
             _ => {}
         }
@@ -426,7 +426,7 @@ impl fmt::Display for CVERequest {
 
         match &self.versionEnd {
             Some(value) => {
-                str.push_str(&build_kv("versionEnd", &value));
+                str.push_str(&build_kv("versionEnd", value));
             }
             _ => {}
         }
@@ -440,12 +440,12 @@ impl fmt::Display for CVERequest {
 
         match &self.virtualMatchString {
             Some(value) => {
-                str.push_str(&build_kv("virtualMatchString", &value));
+                str.push_str(&build_kv("virtualMatchString", value));
             }
             _ => {}
         }
 
-        if str.len() > 0 {
+        if !str.is_empty() {
             let result = &str[0..str.len() - 1];
             write!(fmt, "{}", result);
         }
@@ -461,7 +461,7 @@ impl Request<Response> for CVERequest {
 
         let encoder = utf8_percent_encode(data, FRAGMENT);
         let encoded_data: String = encoder.collect();
-        let full_url = self.base_url.to_owned() + &"?" + &encoded_data;
+        let full_url = self.base_url.to_owned() + "?" + &encoded_data;
         let mut builder = self.http_client.get(full_url);
 
         match &self.api_key {
@@ -476,7 +476,7 @@ impl Request<Response> for CVERequest {
 }
 
 fn main() {
-    let req = CVERequest::create(reqwest::Client::new())
+    let _req = CVERequest::create(reqwest::Client::new())
         .with_cvss_v2_metrics("".to_string())
         .with_cvss_v3_severity("".to_string());
 }
