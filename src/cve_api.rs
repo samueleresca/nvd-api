@@ -446,8 +446,11 @@ impl fmt::Display for CVERequest {
         }
 
         if !str.is_empty() {
-            let result = &str[0..str.len() - 1];
-            write!(fmt, "{}", result);
+            let res = &str[0..str.len() - 1];
+            if let Err(e) = write!(fmt, "{}", res) {
+                return Err(e);
+            }
+            
         }
 
         Ok(())
@@ -562,7 +565,7 @@ mod tests {
 
         // Assert
         assert!(result.is_ok());
-
+        
         let vulnerabilities = result.ok().unwrap().vulnerabilities;
         assert_eq!(vulnerabilities.len(), 1);
         assert_eq!(vulnerabilities[0].cve.id, "CVE-2019-1010218");
