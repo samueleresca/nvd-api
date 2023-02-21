@@ -65,24 +65,24 @@ pub struct CVERequest {
     cwe_id: Option<String>,
     has_cert_alerts: Option<bool>,
     has_cert_notes: Option<bool>,
-    hasKev: Option<bool>,
-    hasOval: Option<bool>,
-    isVulnerable: Option<bool>,
-    keywordExactMatch: Option<bool>,
-    keywordSearch: Option<String>,
-    lastModStartDate: Option<DateTime<Utc>>,
-    lastModEndDate: Option<DateTime<Utc>>,
-    noRejected: Option<bool>,
-    pubStartDate: Option<DateTime<Utc>>,
-    pubEndDate: Option<DateTime<Utc>>,
-    resultPerPage: Option<u32>,
-    startIndex: Option<u32>,
-    sourceIdentifier: Option<String>,
-    versionStart: Option<String>,
-    versionStartType: Option<VersionType>,
-    versionEnd: Option<String>,
-    versionEndType: Option<VersionType>,
-    virtualMatchString: Option<String>,
+    has_key: Option<bool>,
+    has_oval: Option<bool>,
+    is_vulnerable: Option<bool>,
+    keyword_exact_match: Option<bool>,
+    keyword_search: Option<String>,
+    last_mod_start_date: Option<DateTime<Utc>>,
+    last_mod_end_date: Option<DateTime<Utc>>,
+    no_rejected: Option<bool>,
+    pub_start_date: Option<DateTime<Utc>>,
+    pub_end_date: Option<DateTime<Utc>>,
+    result_per_page: Option<u32>,
+    start_index: Option<u32>,
+    source_identifier: Option<String>,
+    version_start: Option<String>,
+    version_start_type: Option<VersionType>,
+    version_end: Option<String>,
+    version_end_type: Option<VersionType>,
+    virtual_match_string: Option<String>,
 }
 
 impl CVERequest {
@@ -100,29 +100,29 @@ impl CVERequest {
             cwe_id: None,
             has_cert_alerts: None,
             has_cert_notes: None,
-            hasKev: None,
-            hasOval: None,
-            isVulnerable: None,
-            keywordExactMatch: None,
-            keywordSearch: None,
-            lastModStartDate: None,
-            lastModEndDate: None,
-            noRejected: None,
-            pubStartDate: None,
-            pubEndDate: None,
-            resultPerPage: None,
-            startIndex: None,
-            sourceIdentifier: None,
-            versionStart: None,
-            versionStartType: None,
-            versionEnd: None,
-            versionEndType: None,
-            virtualMatchString: None,
+            has_key: None,
+            has_oval: None,
+            is_vulnerable: None,
+            keyword_exact_match: None,
+            keyword_search: None,
+            last_mod_start_date: None,
+            last_mod_end_date: None,
+            no_rejected: None,
+            pub_start_date: None,
+            pub_end_date: None,
+            result_per_page: None,
+            start_index: None,
+            source_identifier: None,
+            version_start: None,
+            version_start_type: None,
+            version_end: None,
+            version_end_type: None,
+            virtual_match_string: None,
         }
     }
 
-    pub fn with_cpe_name(mut self, cpeName: String) -> Self {
-        self.cpe_name = Some(cpeName);
+    pub fn with_cpe_name(mut self, cpe_name: String) -> Self {
+        self.cpe_name = Some(cpe_name);
         self
     }
 
@@ -177,24 +177,24 @@ impl CVERequest {
     }
 
     pub fn has_kev(mut self) -> Self {
-        self.hasKev = Some(true);
+        self.has_key = Some(true);
         self
     }
 
     pub fn has_oval(mut self) -> Self {
-        self.hasOval = Some(true);
+        self.has_oval = Some(true);
         self
     }
 
     pub fn is_vulnerable_to_cpe(mut self, cpe_name: String) -> Self {
-        self.isVulnerable = Some(true);
+        self.is_vulnerable = Some(true);
         self.cpe_name = Some(cpe_name);
         self
     }
 
     pub fn with_keyword(mut self, keyword_search: String, exact_match: bool) -> Self {
-        self.keywordExactMatch = if exact_match { Some(true) } else { None };
-        self.keywordSearch = Some(keyword_search);
+        self.keyword_exact_match = if exact_match { Some(true) } else { None };
+        self.keyword_search = Some(keyword_search);
         self
     }
 
@@ -203,51 +203,51 @@ impl CVERequest {
         start: DateTime<Utc>,
         end: DateTime<Utc>,
     ) -> Self {
-        self.lastModStartDate = Some(start);
-        self.lastModEndDate = Some(end);
+        self.last_mod_start_date = Some(start);
+        self.last_mod_end_date = Some(end);
         self
     }
 
     pub fn is_not_rejected(mut self) -> Self {
-        self.noRejected = Some(true);
+        self.no_rejected = Some(true);
         self
     }
 
     pub fn with_published_date_range(mut self, start: DateTime<Utc>, end: DateTime<Utc>) -> Self {
-        self.pubStartDate = Some(start);
-        self.pubEndDate = Some(end);
+        self.pub_start_date = Some(start);
+        self.pub_end_date = Some(end);
         self
     }
 
     pub fn result_per_page(mut self, page_limit: u32) -> Self {
-        self.resultPerPage = Some(page_limit);
+        self.result_per_page = Some(page_limit);
         self
     }
 
     pub fn with_start_index(mut self, start_index: u32) -> Self {
-        self.startIndex = Some(start_index);
+        self.start_index = Some(start_index);
         self
     }
 
     pub fn with_source_identifier(mut self, source_identifier: String) -> Self {
-        self.sourceIdentifier = Some(source_identifier);
+        self.source_identifier = Some(source_identifier);
         self
     }
 
     pub fn with_version_end(mut self, version_end: String, version_type: VersionType) -> Self {
-        self.versionEnd = Some(version_end);
-        self.versionEndType = Some(version_type);
+        self.version_end = Some(version_end);
+        self.version_end_type = Some(version_type);
         self
     }
 
     pub fn with_version_start(mut self, version_start: String, version_type: VersionType) -> Self {
-        self.versionStart = Some(version_start);
-        self.versionStartType = Some(version_type);
+        self.version_start = Some(version_start);
+        self.version_start_type = Some(version_type);
         self
     }
 
     pub fn with_virtual_match_string(mut self, virtual_match_string: String) -> Self {
-        self.virtualMatchString = Some(virtual_match_string);
+        self.virtual_match_string = Some(virtual_match_string);
         self
     }
 }
@@ -319,126 +319,126 @@ impl fmt::Display for CVERequest {
             _ => {}
         }
 
-        match self.hasKev {
+        match self.has_key {
             Some(_) => {
                 str.push_str(&build_single("hasKev"));
             }
             _ => {}
         }
 
-        match self.hasOval {
+        match self.has_oval {
             Some(_) => {
                 str.push_str(&build_single("hasOval"));
             }
             _ => {}
         }
 
-        match self.isVulnerable {
+        match self.is_vulnerable {
             Some(_) => {
                 str.push_str(&build_single("isVulnerable"));
             }
             _ => {}
         }
 
-        match self.keywordExactMatch {
+        match self.keyword_exact_match {
             Some(_) => {
                 str.push_str(&build_single("keywordExactMatch"));
             }
             _ => {}
         }
 
-        match &self.keywordSearch {
+        match &self.keyword_search {
             Some(value) => {
                 str.push_str(&build_kv("keywordSearch", value));
             }
             _ => {}
         }
 
-        match self.lastModStartDate {
+        match self.last_mod_start_date {
             Some(value) => {
                 str.push_str(&build_kv("lastModStartDate", &value.to_rfc3339()));
             }
             _ => {}
         }
 
-        match self.lastModEndDate {
+        match self.last_mod_end_date {
             Some(value) => {
                 str.push_str(&build_kv("lastModEndDate", &value.to_rfc3339()));
             }
             _ => {}
         }
 
-        match self.noRejected {
+        match self.no_rejected {
             Some(_) => {
                 str.push_str(&build_single("noRejected"));
             }
             _ => {}
         }
 
-        match self.pubStartDate {
+        match self.pub_start_date {
             Some(value) => {
                 str.push_str(&build_kv("pubStartDate", &value.to_rfc3339()));
             }
             _ => {}
         }
 
-        match self.pubEndDate {
+        match self.pub_end_date {
             Some(value) => {
                 str.push_str(&build_kv("pubEndDate", &value.to_rfc3339()));
             }
             _ => {}
         }
 
-        match self.resultPerPage {
+        match self.result_per_page {
             Some(value) => {
                 str.push_str(&build_kv("resultPerPage", &value.to_string()));
             }
             _ => {}
         }
 
-        match self.startIndex {
+        match self.start_index {
             Some(value) => {
                 str.push_str(&build_kv("startIndex", &value.to_string()));
             }
             _ => {}
         }
 
-        match &self.sourceIdentifier {
+        match &self.source_identifier {
             Some(value) => {
                 str.push_str(&build_kv("sourceIdentifier", value));
             }
             _ => {}
         }
 
-        match &self.versionStart {
+        match &self.version_start {
             Some(value) => {
                 str.push_str(&build_kv("versionStart", value));
             }
             _ => {}
         }
 
-        match &self.versionStartType {
+        match &self.version_start_type {
             Some(value) => {
                 str.push_str(&build_kv("versionStartType", &value.to_string()));
             }
             _ => {}
         }
 
-        match &self.versionEnd {
+        match &self.version_end {
             Some(value) => {
                 str.push_str(&build_kv("versionEnd", value));
             }
             _ => {}
         }
 
-        match &self.versionEndType {
+        match &self.version_end_type {
             Some(value) => {
                 str.push_str(&build_kv("versionEndType", &value.to_string()));
             }
             _ => {}
         }
 
-        match &self.virtualMatchString {
+        match &self.virtual_match_string {
             Some(value) => {
                 str.push_str(&build_kv("virtualMatchString", value));
             }
@@ -473,12 +473,6 @@ impl Request<Response> for CVERequest {
 
         Ok(builder.send().await?.json::<Response>().await?)
     }
-}
-
-fn main() {
-    let _req = CVERequest::create(reqwest::Client::new())
-        .with_cvss_v2_metrics("".to_string())
-        .with_cvss_v3_severity("".to_string());
 }
 
 #[cfg(test)]
@@ -568,7 +562,7 @@ mod tests {
 
         // Assert
         assert!(result.is_ok());
-        
+
         let vulnerabilities = result.ok().unwrap().vulnerabilities;
         assert_eq!(vulnerabilities.len(), 1);
         assert_eq!(vulnerabilities[0].cve.id, "CVE-2019-1010218");

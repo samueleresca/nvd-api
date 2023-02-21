@@ -99,7 +99,7 @@ pub struct CveItem {
 }
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 #[serde(rename = "cvss-v2")]
-//#[serde(deny_unknown_fields)]
+#[serde(deny_unknown_fields)]
 pub struct CvssV2 {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "acInsufInfo")]
@@ -107,8 +107,8 @@ pub struct CvssV2 {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "baseSeverity")]
     pub base_severity: Option<String>,
-    //#[serde(rename = "cvssData")]
-    //pub cvss_data: Option<String>,
+    #[serde(rename = "cvssData")]
+    pub cvss_data: Option<v2::CVSS>,
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "exploitabilityScore")]
     pub exploitability_score: Option<DefSubscore>,
@@ -133,10 +133,10 @@ pub struct CvssV2 {
 }
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 #[serde(rename = "cvss-v30")]
-//#[serde(deny_unknown_fields)]
+#[serde(deny_unknown_fields)]
 pub struct CvssV30 {
-    //#[serde(rename = "cvssData")]
-    //pub cvss_data: CvssV30Json,
+    #[serde(rename = "cvssData")]
+    pub cvss_data: v3_x::CVSS,
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "exploitabilityScore")]
     pub exploitability_score: Option<DefSubscore>,
@@ -152,7 +152,7 @@ pub struct CvssV30 {
 #[serde(deny_unknown_fields)]
 pub struct CvssV31 {
     #[serde(rename = "cvssData")]
-    pub cvss_data: v3_1::CVSS,
+    pub cvss_data: v3_x::CVSS,
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "exploitabilityScore")]
     pub exploitability_score: Option<DefSubscore>,
@@ -233,7 +233,7 @@ pub struct Response {
     pub vulnerabilities: Vec<DefCveItem>,
 }
 
-pub mod v3_1 {
+pub mod v3_x {
     use serde::{Deserialize, Serialize};
 
     #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
@@ -348,7 +348,6 @@ pub mod v3_1 {
         None,
     }
 
-
     #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
     pub enum ModifiedCiaType {
         #[serde(rename = "HIGH")]
@@ -403,8 +402,6 @@ pub mod v3_1 {
         NotDefined,
     }
 
-
-
     #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
     pub enum CiaRequirementType {
         #[serde(rename = "LOW")]
@@ -430,8 +427,6 @@ pub mod v3_1 {
         #[serde(rename = "CRITICAL")]
         Critical,
     }
-
-    
 
     #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
     pub struct CVSS {
@@ -516,6 +511,189 @@ pub mod v3_1 {
         #[serde(skip_serializing_if = "Option::is_none")]
         #[serde(rename = "userInteraction")]
         pub user_interaction: Option<UserInteractionType>,
+        #[serde(rename = "vectorString")]
+        pub vector_string: String,
+        #[doc = " CVSS Version"]
+        pub version: String,
+    }
+}
+
+pub mod v2 {
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+    #[serde(rename = "accessComplexityType")]
+    pub enum AccessComplexityType {
+        #[serde(rename = "HIGH")]
+        High,
+        #[serde(rename = "MEDIUM")]
+        Medium,
+        #[serde(rename = "LOW")]
+        Low,
+    }
+    #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+    #[serde(rename = "accessVectorType")]
+    pub enum AccessVectorType {
+        #[serde(rename = "NETWORK")]
+        Network,
+        #[serde(rename = "ADJACENT_NETWORK")]
+        AdjacentNetwork,
+        #[serde(rename = "LOCAL")]
+        Local,
+    }
+    #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+    #[serde(rename = "authenticationType")]
+    pub enum AuthenticationType {
+        #[serde(rename = "MULTIPLE")]
+        Multiple,
+        #[serde(rename = "SINGLE")]
+        Single,
+        #[serde(rename = "NONE")]
+        None,
+    }
+    #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+    #[serde(rename = "ciaRequirementType")]
+    pub enum CiaRequirementType {
+        #[serde(rename = "LOW")]
+        Low,
+        #[serde(rename = "MEDIUM")]
+        Medium,
+        #[serde(rename = "HIGH")]
+        High,
+        #[serde(rename = "NOT_DEFINED")]
+        NotDefined,
+    }
+    #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+    #[serde(rename = "ciaType")]
+    pub enum CiaType {
+        #[serde(rename = "NONE")]
+        None,
+        #[serde(rename = "PARTIAL")]
+        Partial,
+        #[serde(rename = "COMPLETE")]
+        Complete,
+    }
+    #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+    #[serde(rename = "collateralDamagePotentialType")]
+    pub enum CollateralDamagePotentialType {
+        #[serde(rename = "NONE")]
+        None,
+        #[serde(rename = "LOW")]
+        Low,
+        #[serde(rename = "LOW_MEDIUM")]
+        LowMedium,
+        #[serde(rename = "MEDIUM_HIGH")]
+        MediumHigh,
+        #[serde(rename = "HIGH")]
+        High,
+        #[serde(rename = "NOT_DEFINED")]
+        NotDefined,
+    }
+    #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+    #[serde(rename = "exploitabilityType")]
+    pub enum ExploitabilityType {
+        #[serde(rename = "UNPROVEN")]
+        Unproven,
+        #[serde(rename = "PROOF_OF_CONCEPT")]
+        ProofOfConcept,
+        #[serde(rename = "FUNCTIONAL")]
+        Functional,
+        #[serde(rename = "HIGH")]
+        High,
+        #[serde(rename = "NOT_DEFINED")]
+        NotDefined,
+    }
+    #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+    #[serde(rename = "remediationLevelType")]
+    pub enum RemediationLevelType {
+        #[serde(rename = "OFFICIAL_FIX")]
+        OfficialFix,
+        #[serde(rename = "TEMPORARY_FIX")]
+        TemporaryFix,
+        #[serde(rename = "WORKAROUND")]
+        Workaround,
+        #[serde(rename = "UNAVAILABLE")]
+        Unavailable,
+        #[serde(rename = "NOT_DEFINED")]
+        NotDefined,
+    }
+    #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+    #[serde(rename = "reportConfidenceType")]
+    pub enum ReportConfidenceType {
+        #[serde(rename = "UNCONFIRMED")]
+        Unconfirmed,
+        #[serde(rename = "UNCORROBORATED")]
+        Uncorroborated,
+        #[serde(rename = "CONFIRMED")]
+        Confirmed,
+        #[serde(rename = "NOT_DEFINED")]
+        NotDefined,
+    }
+    pub type ScoreType = f64;
+    #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+    #[serde(rename = "targetDistributionType")]
+    pub enum TargetDistributionType {
+        #[serde(rename = "NONE")]
+        None,
+        #[serde(rename = "LOW")]
+        Low,
+        #[serde(rename = "MEDIUM")]
+        Medium,
+        #[serde(rename = "HIGH")]
+        High,
+        #[serde(rename = "NOT_DEFINED")]
+        NotDefined,
+    }
+    #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
+    pub struct CVSS {
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "accessComplexity")]
+        pub access_complexity: Option<AccessComplexityType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "accessVector")]
+        pub access_vector: Option<AccessVectorType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub authentication: Option<AuthenticationType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "availabilityImpact")]
+        pub availability_impact: Option<CiaType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "availabilityRequirement")]
+        pub availability_requirement: Option<CiaRequirementType>,
+        #[serde(rename = "baseScore")]
+        pub base_score: ScoreType,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "collateralDamagePotential")]
+        pub collateral_damage_potential: Option<CollateralDamagePotentialType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "confidentialityImpact")]
+        pub confidentiality_impact: Option<CiaType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "confidentialityRequirement")]
+        pub confidentiality_requirement: Option<CiaRequirementType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "environmentalScore")]
+        pub environmental_score: Option<ScoreType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub exploitability: Option<ExploitabilityType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "integrityImpact")]
+        pub integrity_impact: Option<CiaType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "integrityRequirement")]
+        pub integrity_requirement: Option<CiaRequirementType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "remediationLevel")]
+        pub remediation_level: Option<RemediationLevelType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "reportConfidence")]
+        pub report_confidence: Option<ReportConfidenceType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "targetDistribution")]
+        pub target_distribution: Option<TargetDistributionType>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(rename = "temporalScore")]
+        pub temporal_score: Option<ScoreType>,
         #[serde(rename = "vectorString")]
         pub vector_string: String,
         #[doc = " CVSS Version"]
