@@ -1,1 +1,1 @@
-pub mod cve_api;
+pub mod cve;

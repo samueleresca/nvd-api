@@ -2,7 +2,7 @@ use std::fmt;
 
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
-use nvd_models::cve_api::Response;
+use nvd_models::cve::Response;
 use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
 
 pub enum VersionType {
@@ -46,10 +46,6 @@ fn build_single(name: &str) -> String {
 
     str
 }
-
-pub struct CVEClient;
-
-impl CVEClient {}
 
 pub struct CVERequest {
     http_client: reqwest::Client,
@@ -256,11 +252,8 @@ impl fmt::Display for CVERequest {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         let mut str: String = String::new();
 
-        match &self.cpe_name {
-            Some(value) => {
-                str.push_str(&build_kv("cpeName", value));
-            }
-            _ => {}
+        if let Some(value) = &self.cpe_name {
+            str.push_str(&build_kv("cpeName", value));
         }
 
         match &self.cve_id {
