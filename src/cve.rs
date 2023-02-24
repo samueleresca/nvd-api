@@ -278,14 +278,26 @@ impl fmt::Display for CVERequest {
 
         add_field(
             &mut str,
-            self.last_mod_start_date.as_ref(),
+            self.last_mod_start_date.map(|f| f.to_rfc3339()).as_ref(),
             "lastModStartDate",
         );
-        add_field(&mut str, self.last_mod_end_date.as_ref(), "lastModEndDate");
+        add_field(
+            &mut str,
+            self.last_mod_end_date.map(|f| f.to_rfc3339()).as_ref(),
+            "lastModEndDate",
+        );
 
         add_bool_field(&mut str, self.no_rejected.as_ref(), "noRejected");
-        add_field(&mut str, self.pub_start_date.as_ref(), "pubStartDate");
-        add_field(&mut str, self.pub_end_date.as_ref(), "pubEndDate");
+        add_field(
+            &mut str,
+            self.pub_start_date.map(|f| f.to_rfc3339()).as_ref(),
+            "pubStartDate",
+        );
+        add_field(
+            &mut str,
+            self.pub_end_date.map(|f| f.to_rfc3339()).as_ref(),
+            "pubEndDate",
+        );
 
         add_field(&mut str, self.result_per_page.as_ref(), "resultPerPage");
         add_field(&mut str, self.start_index.as_ref(), "startIndex");
@@ -346,6 +358,7 @@ mod tests {
     use std::fs;
 
     use super::*;
+    use chrono::TimeZone;
     use wiremock::matchers::any;
     use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -367,6 +380,10 @@ mod tests {
             .has_cert_notes()
             .has_kev()
             .has_oval()
+            .with_published_date_range(
+                Utc.with_ymd_and_hms(2023, 11, 12, 0, 0, 0).unwrap(),
+                Utc.with_ymd_and_hms(2023, 11, 14, 0, 0, 0).unwrap(),
+            )
             .is_vulnerable_to_cpe("cpe_name".to_owned())
             .with_keyword("keyword_value".to_owned(), true)
             .is_not_rejected()
@@ -394,6 +411,8 @@ mod tests {
         &keywordExactMatch\
         &keywordSearch=keyword_value\
         &noRejected\
+        &pubStartDate=2023-11-12T00:00:00+00:00\
+        &pubEndDate=2023-11-14T00:00:00+00:00\
         &resultPerPage=31\
         &startIndex=1\
         &sourceIdentifier=source_indentifier_value\
@@ -411,7 +430,7 @@ mod tests {
     async fn cve_request_execute_and_deserialize_correctly() {
         // Arrange
         let mock_server = MockServer::start().await;
-        let test_data: String = fs::read_to_string("src/test_data/response.json").unwrap();
+        let test_data: String = fs::read_to_string("src/test_data/cve.json").unwrap();
 
         Mock::given(any())
             .respond_with(ResponseTemplate::new(200).set_body_string(test_data))
