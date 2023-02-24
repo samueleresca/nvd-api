@@ -313,9 +313,7 @@ impl fmt::Display for CVERequest {
 
         if !str.is_empty() {
             let res = &str[0..str.len() - 1];
-            if let Err(e) = write!(fmt, "{}", res) {
-                return Err(e);
-            }
+            write!(fmt, "{}", res)?
         }
 
         Ok(())
