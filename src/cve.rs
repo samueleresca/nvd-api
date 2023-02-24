@@ -1,9 +1,8 @@
-use std::fmt;
-
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use nvd_models::cve::Response;
 use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
+use std::fmt;
 
 pub enum VersionType {
     Including,
@@ -31,22 +30,6 @@ const CVE_API_BASE_URL: &str = "https://services.nvd.nist.gov/rest/json/cves/2.0
 // https://url.spec.whatwg.org/#fragment-percent-encode-set
 const FRAGMENT: &AsciiSet = &CONTROLS.add(b' ').add(b'"').add(b'<').add(b'>').add(b'#');
 
-fn build_kv(name: &str, value: &str) -> String {
-    let mut str: String = String::from(name);
-    str.push_str(ASSIGNER);
-    str.push_str(value);
-    str.push_str(DELIMITER);
-
-    str
-}
-
-fn build_single(name: &str) -> String {
-    let mut str: String = String::from(name);
-    str.push_str(DELIMITER);
-
-    str
-}
-
 pub struct CVERequest {
     http_client: reqwest::Client,
     api_key: Option<String>,
@@ -61,7 +44,7 @@ pub struct CVERequest {
     cwe_id: Option<String>,
     has_cert_alerts: Option<bool>,
     has_cert_notes: Option<bool>,
-    has_key: Option<bool>,
+    has_kev: Option<bool>,
     has_oval: Option<bool>,
     is_vulnerable: Option<bool>,
     keyword_exact_match: Option<bool>,
@@ -96,7 +79,7 @@ impl CVERequest {
             cwe_id: None,
             has_cert_alerts: None,
             has_cert_notes: None,
-            has_key: None,
+            has_kev: None,
             has_oval: None,
             is_vulnerable: None,
             keyword_exact_match: None,
@@ -173,7 +156,7 @@ impl CVERequest {
     }
 
     pub fn has_kev(mut self) -> Self {
-        self.has_key = Some(true);
+        self.has_kev = Some(true);
         self
     }
 
@@ -252,198 +235,87 @@ impl fmt::Display for CVERequest {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         let mut str: String = String::new();
 
-        if let Some(value) = &self.cpe_name {
-            str.push_str(&build_kv("cpeName", value));
+        fn add_field<T: std::fmt::Display>(
+            dest: &mut String,
+            field_value: Option<&T>,
+            field_name: &str,
+        ) {
+            if let Some(value) = field_value {
+                dest.push_str(field_name);
+                dest.push_str(ASSIGNER);
+                dest.push_str(&value.to_string());
+                dest.push_str(DELIMITER);
+            };
         }
 
-        match &self.cve_id {
-            Some(value) => {
-                str.push_str(&build_kv("cveId", value));
-            }
-            _ => {}
+        fn add_bool_field(dest: &mut String, field_value: Option<&bool>, field_name: &str) {
+            if field_value.is_some() {
+                dest.push_str(field_name);
+                dest.push_str(DELIMITER);
+            };
         }
 
-        match &self.cvss_v2_metrics {
-            Some(value) => {
-                str.push_str(&build_kv("cvssV2Metrics", value));
-            }
-            _ => {}
-        }
+        add_field(&mut str, self.cpe_name.as_ref(), "cpeName");
+        add_field(&mut str, self.cve_id.as_ref(), "cveId");
+        add_field(&mut str, self.cvss_v2_metrics.as_ref(), "cvssV2Metrics");
+        add_field(&mut str, self.cvss_v2_severity.as_ref(), "cvssV2Severity");
+        add_field(&mut str, self.cvss_v3_metrics.as_ref(), "cvssV3Metrics");
+        add_field(&mut str, self.cvss_v3_severity.as_ref(), "cvssV3Severity");
+        add_field(&mut str, self.cwe_id.as_ref(), "cweId");
 
-        match &self.cvss_v2_severity {
-            Some(value) => {
-                str.push_str(&build_kv("cvssV2Severity", value));
-            }
-            _ => {}
-        }
+        add_bool_field(&mut str, self.has_cert_alerts.as_ref(), "hasCertAlerts");
+        add_bool_field(&mut str, self.has_cert_notes.as_ref(), "hasCertNotes");
+        add_bool_field(&mut str, self.has_kev.as_ref(), "hasKev");
+        add_bool_field(&mut str, self.has_oval.as_ref(), "hasOval");
+        add_bool_field(&mut str, self.is_vulnerable.as_ref(), "isVulnerable");
+        add_bool_field(
+            &mut str,
+            self.keyword_exact_match.as_ref(),
+            "keywordExactMatch",
+        );
 
-        match &self.cvss_v3_metrics {
-            Some(value) => {
-                str.push_str(&build_kv("cvssV3Metrics", value));
-            }
-            _ => {}
-        }
+        add_field(&mut str, self.keyword_search.as_ref(), "keywordSearch");
 
-        match &self.cvss_v3_severity {
-            Some(value) => {
-                str.push_str(&build_kv("cvssV3Severity", value));
-            }
-            _ => {}
-        }
+        add_field(
+            &mut str,
+            self.last_mod_start_date.as_ref(),
+            "lastModStartDate",
+        );
+        add_field(&mut str, self.last_mod_end_date.as_ref(), "lastModEndDate");
 
-        match &self.cwe_id {
-            Some(value) => {
-                str.push_str(&build_kv("cweId", value));
-            }
-            _ => {}
-        }
+        add_bool_field(&mut str, self.no_rejected.as_ref(), "noRejected");
+        add_field(&mut str, self.pub_start_date.as_ref(), "pubStartDate");
+        add_field(&mut str, self.pub_end_date.as_ref(), "pubEndDate");
 
-        match self.has_cert_alerts {
-            Some(_) => {
-                str.push_str(&build_single("hasCertAlerts"));
-            }
-            _ => {}
-        }
+        add_field(&mut str, self.result_per_page.as_ref(), "resultPerPage");
+        add_field(&mut str, self.start_index.as_ref(), "startIndex");
+        add_field(
+            &mut str,
+            self.source_identifier.as_ref(),
+            "sourceIdentifier",
+        );
 
-        match self.has_cert_notes {
-            Some(_) => {
-                str.push_str(&build_single("hasCertNotes"));
-            }
-            _ => {}
-        }
+        add_field(&mut str, self.version_start.as_ref(), "versionStart");
+        add_field(
+            &mut str,
+            self.version_start_type.as_ref(),
+            "versionStartType",
+        );
 
-        match self.has_key {
-            Some(_) => {
-                str.push_str(&build_single("hasKev"));
-            }
-            _ => {}
-        }
+        add_field(&mut str, self.version_end.as_ref(), "versionEnd");
+        add_field(&mut str, self.version_end_type.as_ref(), "versionEndType");
 
-        match self.has_oval {
-            Some(_) => {
-                str.push_str(&build_single("hasOval"));
-            }
-            _ => {}
-        }
-
-        match self.is_vulnerable {
-            Some(_) => {
-                str.push_str(&build_single("isVulnerable"));
-            }
-            _ => {}
-        }
-
-        match self.keyword_exact_match {
-            Some(_) => {
-                str.push_str(&build_single("keywordExactMatch"));
-            }
-            _ => {}
-        }
-
-        match &self.keyword_search {
-            Some(value) => {
-                str.push_str(&build_kv("keywordSearch", value));
-            }
-            _ => {}
-        }
-
-        match self.last_mod_start_date {
-            Some(value) => {
-                str.push_str(&build_kv("lastModStartDate", &value.to_rfc3339()));
-            }
-            _ => {}
-        }
-
-        match self.last_mod_end_date {
-            Some(value) => {
-                str.push_str(&build_kv("lastModEndDate", &value.to_rfc3339()));
-            }
-            _ => {}
-        }
-
-        match self.no_rejected {
-            Some(_) => {
-                str.push_str(&build_single("noRejected"));
-            }
-            _ => {}
-        }
-
-        match self.pub_start_date {
-            Some(value) => {
-                str.push_str(&build_kv("pubStartDate", &value.to_rfc3339()));
-            }
-            _ => {}
-        }
-
-        match self.pub_end_date {
-            Some(value) => {
-                str.push_str(&build_kv("pubEndDate", &value.to_rfc3339()));
-            }
-            _ => {}
-        }
-
-        match self.result_per_page {
-            Some(value) => {
-                str.push_str(&build_kv("resultPerPage", &value.to_string()));
-            }
-            _ => {}
-        }
-
-        match self.start_index {
-            Some(value) => {
-                str.push_str(&build_kv("startIndex", &value.to_string()));
-            }
-            _ => {}
-        }
-
-        match &self.source_identifier {
-            Some(value) => {
-                str.push_str(&build_kv("sourceIdentifier", value));
-            }
-            _ => {}
-        }
-
-        match &self.version_start {
-            Some(value) => {
-                str.push_str(&build_kv("versionStart", value));
-            }
-            _ => {}
-        }
-
-        match &self.version_start_type {
-            Some(value) => {
-                str.push_str(&build_kv("versionStartType", &value.to_string()));
-            }
-            _ => {}
-        }
-
-        match &self.version_end {
-            Some(value) => {
-                str.push_str(&build_kv("versionEnd", value));
-            }
-            _ => {}
-        }
-
-        match &self.version_end_type {
-            Some(value) => {
-                str.push_str(&build_kv("versionEndType", &value.to_string()));
-            }
-            _ => {}
-        }
-
-        match &self.virtual_match_string {
-            Some(value) => {
-                str.push_str(&build_kv("virtualMatchString", value));
-            }
-            _ => {}
-        }
+        add_field(
+            &mut str,
+            self.virtual_match_string.as_ref(),
+            "virtualMatchString",
+        );
 
         if !str.is_empty() {
             let res = &str[0..str.len() - 1];
             if let Err(e) = write!(fmt, "{}", res) {
                 return Err(e);
             }
-            
         }
 
         Ok(())
@@ -558,7 +430,7 @@ mod tests {
 
         // Assert
         assert!(result.is_ok());
-        
+
         let vulnerabilities = result.ok().unwrap().vulnerabilities;
         assert_eq!(vulnerabilities.len(), 1);
         assert_eq!(vulnerabilities[0].cve.id, "CVE-2019-1010218");
