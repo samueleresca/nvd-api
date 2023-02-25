@@ -1,15 +1,11 @@
 use core::fmt;
 
+use crate::common::{RequestExecutor, ASSIGNER, CVE_API_BASE_URL, DELIMITER};
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use nvd_models::cve_history::Response;
-use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
-
-const DELIMITER: &str = "&";
-const ASSIGNER: &str = "=";
-const CVE_API_BASE_URL: &str = "https://services.nvd.nist.gov/rest/json/cvehistory/2.0";
-const FRAGMENT: &AsciiSet = &CONTROLS.add(b' ').add(b'"').add(b'<').add(b'>').add(b'#');
 
 #[derive(Clone, PartialEq, Eq, Debug, Deserialize, Serialize)]
 pub enum Event {
@@ -38,9 +34,18 @@ pub enum Event {
 }
 
 #[async_trait]
-trait Request<T> {
-    // Associated function signature; `Self` refers to the implementor type.
-    async fn execute(&self) -> Result<T, reqwest::Error>;
+impl RequestExecutor<Response> for CVEChangeHistoryRequest {
+    fn get_base_url(&self) -> &String {
+        &self.base_url
+    }
+
+    fn get_http_client(&self) -> &Client {
+        &self.http_client
+    }
+
+    fn get_api_key(&self) -> &Option<String> {
+        &self.api_key
+    }
 }
 
 pub struct CVEChangeHistoryRequest {
@@ -141,27 +146,6 @@ impl fmt::Display for CVEChangeHistoryRequest {
         }
 
         Ok(())
-    }
-}
-
-#[async_trait]
-impl Request<Response> for CVEChangeHistoryRequest {
-    async fn execute(&self) -> Result<Response, reqwest::Error> {
-        let data = &self.to_string();
-
-        let encoder = utf8_percent_encode(data, FRAGMENT);
-        let encoded_data: String = encoder.collect();
-        let full_url = self.base_url.to_owned() + "?" + &encoded_data;
-        let mut builder = self.http_client.get(full_url);
-
-        match &self.api_key {
-            Some(v) => {
-                builder = builder.header("api_key", v.to_string());
-            }
-            None => {}
-        }
-
-        Ok(builder.send().await?.json::<Response>().await?)
     }
 }
 

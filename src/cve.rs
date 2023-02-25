@@ -1,8 +1,10 @@
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use nvd_models::cve::Response;
-use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
+use reqwest::Client;
 use std::fmt;
+
+use crate::common::{RequestExecutor, ASSIGNER, CVE_API_BASE_URL, DELIMITER};
 
 pub enum VersionType {
     Including,
@@ -17,18 +19,6 @@ impl fmt::Display for VersionType {
         }
     }
 }
-
-#[async_trait]
-trait Request<T> {
-    // Associated function signature; `Self` refers to the implementor type.
-    async fn execute(&self) -> Result<T, reqwest::Error>;
-}
-
-const DELIMITER: &str = "&";
-const ASSIGNER: &str = "=";
-const CVE_API_BASE_URL: &str = "https://services.nvd.nist.gov/rest/json/cves/2.0";
-// https://url.spec.whatwg.org/#fragment-percent-encode-set
-const FRAGMENT: &AsciiSet = &CONTROLS.add(b' ').add(b'"').add(b'<').add(b'>').add(b'#');
 
 pub struct CVERequest {
     http_client: reqwest::Client,
@@ -62,6 +52,21 @@ pub struct CVERequest {
     version_end: Option<String>,
     version_end_type: Option<VersionType>,
     virtual_match_string: Option<String>,
+}
+
+#[async_trait]
+impl RequestExecutor<Response> for CVERequest {
+    fn get_base_url(&self) -> &String {
+        &self.base_url
+    }
+
+    fn get_http_client(&self) -> &Client {
+        &self.http_client
+    }
+
+    fn get_api_key(&self) -> &Option<String> {
+        &self.api_key
+    }
 }
 
 impl CVERequest {
@@ -329,27 +334,6 @@ impl fmt::Display for CVERequest {
         }
 
         Ok(())
-    }
-}
-
-#[async_trait]
-impl Request<Response> for CVERequest {
-    async fn execute(&self) -> Result<Response, reqwest::Error> {
-        let data = &self.to_string();
-
-        let encoder = utf8_percent_encode(data, FRAGMENT);
-        let encoded_data: String = encoder.collect();
-        let full_url = self.base_url.to_owned() + "?" + &encoded_data;
-        let mut builder = self.http_client.get(full_url);
-
-        match &self.api_key {
-            Some(v) => {
-                builder = builder.header("api_key", v.to_string());
-            }
-            None => {}
-        }
-
-        Ok(builder.send().await?.json::<Response>().await?)
     }
 }
 
