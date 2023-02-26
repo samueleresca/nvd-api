@@ -304,7 +304,7 @@ impl fmt::Display for CVERequest {
             "pubEndDate",
         );
 
-        add_field(&mut str, self.result_per_page.as_ref(), "resultPerPage");
+        add_field(&mut str, self.result_per_page.as_ref(), "resultsPerPage");
         add_field(&mut str, self.start_index.as_ref(), "startIndex");
         add_field(
             &mut str,
@@ -397,7 +397,7 @@ mod tests {
         &noRejected\
         &pubStartDate=2023-11-12T00:00:00+00:00\
         &pubEndDate=2023-11-14T00:00:00+00:00\
-        &resultPerPage=31\
+        &resultsPerPage=31\
         &startIndex=1\
         &sourceIdentifier=source_indentifier_value\
         &versionStart=0.0.1\

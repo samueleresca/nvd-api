@@ -138,7 +138,7 @@ impl fmt::Display for CVEChangeHistoryRequest {
             "changeEndDate",
         );
         add_field(&mut str, self.start_index.as_ref(), "startIndex");
-        add_field(&mut str, self.result_per_page.as_ref(), "resultPerPage");
+        add_field(&mut str, self.result_per_page.as_ref(), "resultsPerPage");
 
         if !str.is_empty() {
             let res = &str[0..str.len() - 1];
@@ -159,13 +159,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn cve_request_encoding_works_when_empty() {
+    fn cve_change_history_request_encoding_works_when_empty() {
         let result = CVEChangeHistoryRequest::create(reqwest::Client::new()).to_string();
         assert_eq!("", result)
     }
 
     #[test]
-    fn cve_request_encoding_works() {
+    fn cve_change_history_request_encoding_works() {
         let result = CVEChangeHistoryRequest::create(reqwest::Client::new())
             .with_cve_id("CVE-1993-3".to_owned())
             .with_change_range(
@@ -182,14 +182,14 @@ mod tests {
         &changeStartDate=2023-11-12T00:00:00+00:00\
         &changeEndDate=2023-11-14T00:00:00+00:00\
         &startIndex=1\
-        &resultPerPage=4\
+        &resultsPerPage=4\
         ",
             result
         );
     }
 
     #[tokio::test]
-    async fn cve_request_execute_and_deserialize_correctly() {
+    async fn cve_change_history_request_execute_and_deserialize_correctly() {
         // Arrange
         let mock_server = MockServer::start().await;
         let test_data: String =

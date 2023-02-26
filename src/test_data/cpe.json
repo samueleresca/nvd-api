@@ -1,0 +1,30 @@
+{
+    "resultsPerPage": 1,
+    "startIndex": 0,
+    "totalResults": 1,
+    "format": "NVD_CPE",
+    "version": "2.0",
+    "timestamp": "2023-02-26T22:31:45.913",
+    "products": [
+        {
+            "cpe": {
+                "deprecated": false,
+                "cpeName": "cpe:2.3:a:nmap:nmap:3.27:*:*:*:*:*:*:*",
+                "cpeNameId": "4DAAA102-AB17-4491-B383-A1AAC764704C",
+                "lastModified": "2018-05-22T17:26:19.727",
+                "created": "2018-05-22T17:26:19.727",
+                "titles": [
+                    {
+                        "title": "Nmap 3.27",
+                        "lang": "en"
+                    }
+                ],
+                "refs": [
+                    {
+                        "ref": "http:\/\/nmap.org\/changelog.html"
+                    }
+                ]
+            }
+        }
+    ]
+}
