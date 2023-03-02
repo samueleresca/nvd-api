@@ -1,0 +1,84 @@
+{
+    "resultsPerPage": 420,
+    "startIndex": 0,
+    "totalResults": 420,
+    "format": "NVD_CPEMatchString",
+    "version": "2.0",
+    "timestamp": "2023-03-02T16:12:04.400",
+    "matchStrings": [
+        {
+            "matchString": {
+                "matchCriteriaId": "954CA461-0FE1-4FD6-B36B-B736BDC4D1A6",
+                "criteria": "cpe:2.3:a:cisco:adaptive_security_appliance:*:*:*:*:*:*:*:*",
+                "versionStartIncluding": "9.10.0",
+                "versionEndExcluding": "9.10.1.44",
+                "lastModified": "2020-10-23T02:29:07.093",
+                "cpeLastModified": "2022-11-21T14:37:59.563",
+                "created": "2020-10-23T02:29:07.093",
+                "status": "Active",
+                "matches": [
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.0:*:*:*:*:*:*:*",
+                        "cpeNameId": "43C33124-53CC-4804-B437-69C2A846B911"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1:*:*:*:*:*:*:*",
+                        "cpeNameId": "E5827AED-3E63-4AE6-9FA7-018A902B1FC1"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.2:*:*:*:*:*:*:*",
+                        "cpeNameId": "D87714F3-8F59-4E83-B661-8DF41401A10E"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.7:*:*:*:*:*:*:*",
+                        "cpeNameId": "E2256A71-EF08-49EE-8FAF-0E8DCE7DE6DA"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.10:*:*:*:*:*:*:*",
+                        "cpeNameId": "8DDB4B5F-DE95-43C8-82FC-6EA2A4E3EF8B"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.11:*:*:*:*:*:*:*",
+                        "cpeNameId": "E459FE0B-5749-4412-88FB-C2DB4296C29C"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.17:*:*:*:*:*:*:*",
+                        "cpeNameId": "81CE883C-0FD9-459B-9343-D874C8FA0C43"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.22:*:*:*:*:*:*:*",
+                        "cpeNameId": "229D8BC1-81E8-450A-94A9-79C46147A7E0"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.27:*:*:*:*:*:*:*",
+                        "cpeNameId": "70CA1079-9E4D-40B6-9570-D1A77AC0AE23"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.30:*:*:*:*:*:*:*",
+                        "cpeNameId": "9204BC39-CACE-43DC-84F9-2F81BA5AADC5"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.32:*:*:*:*:*:*:*",
+                        "cpeNameId": "2809CF1D-AD34-4C3B-80DB-BC101F0C1922"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.37:*:*:*:*:*:*:*",
+                        "cpeNameId": "D654A688-0F3D-4285-AE50-72A0DE38DDB4"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.40:*:*:*:*:*:*:*",
+                        "cpeNameId": "6937B038-CF0D-4833-971F-AE0174E84735"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.42:*:*:*:*:*:*:*",
+                        "cpeNameId": "617F04EF-EC1D-4CA7-BC60-7A3E52FC3E70"
+                    },
+                    {
+                        "cpeName": "cpe:2.3:a:cisco:adaptive_security_appliance:9.10.1.43:*:*:*:*:*:*:*",
+                        "cpeNameId": "6E5A7E9A-A442-4143-86F4-44FB1FFC4169"
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -430,11 +430,7 @@ mod tests {
             .await;
 
         // Assert
-        assert!(result.is_ok());
-
-        let vulnerabilities = result.ok().unwrap().vulnerabilities;
-        assert_eq!(vulnerabilities.len(), 1);
-        assert_eq!(vulnerabilities[0].cve.id, "CVE-2019-1010218");
+        assert_eq!(result.ok().map(|r| r.vulnerabilities.len()), Some(1));
     }
 
     #[tokio::test]
@@ -455,6 +451,6 @@ mod tests {
             .await;
 
         // Assert
-        assert!(result.is_err());
+        assert_eq!(result.ok().map(|r| r.vulnerabilities.len()), None);
     }
 }

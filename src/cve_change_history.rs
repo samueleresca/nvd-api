@@ -209,9 +209,9 @@ mod tests {
             .await;
 
         // Assert
-        assert!(result.is_ok());
-
-        let response = result.ok().unwrap();
-        assert_eq!(response.cve_changes.unwrap().len(), 1);
+        assert_eq!(
+            result.ok().map(|r| r.cve_changes.map(|cc| cc.len())),
+            Some(Some(1))
+        );
     }
 }

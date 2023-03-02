@@ -40,7 +40,7 @@ pub struct Detail {
 }
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 pub struct Response {
-    #[doc = " Array of CVE Changes"]
+    #[doc = "Array of CVE Changes"]
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "cveChanges")]
     pub cve_changes: Option<Vec<DefChange>>,

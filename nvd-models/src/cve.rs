@@ -10,7 +10,7 @@ pub struct Config {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub operator: Option<String>,
 }
-#[doc = " CPE match string or range"]
+#[doc = "CPE match string or range"]
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 #[serde(rename = "cpe_match")]
 #[serde(deny_unknown_fields)]
@@ -36,15 +36,15 @@ pub type CveId = String;
 #[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct CveItemMetrics {
-    #[doc = " CVSS V2.0 score."]
+    #[doc = "CVSS V2.0 score."]
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "cvssMetricV2")]
     pub cvss_metric_v2: Option<Vec<CvssV2>>,
-    #[doc = " CVSS V3.0 score."]
+    #[doc = "CVSS V3.0 score."]
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "cvssMetricV30")]
     pub cvss_metric_v30: Option<Vec<CvssV30>>,
-    #[doc = " CVSS V3.1 score."]
+    #[doc = "CVSS V3.1 score."]
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "cvssMetricV31")]
     pub cvss_metric_v31: Option<Vec<CvssV31>>,
@@ -80,7 +80,7 @@ pub struct CveItem {
     pub id: CveId,
     #[serde(rename = "lastModified")]
     pub last_modified: String,
-    #[doc = " Metric scores for a vulnerability as found on NVD."]
+    #[doc = "Metric scores for a vulnerability as found on NVD."]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub metrics: Option<CveItemMetrics>,
     pub published: String,
@@ -229,7 +229,7 @@ pub struct Response {
     #[serde(rename = "totalResults")]
     pub total_results: i64,
     pub version: String,
-    #[doc = " NVD feed array of CVE"]
+    #[doc = "NVD feed array of CVE"]
     pub vulnerabilities: Vec<DefCveItem>,
 }
 
@@ -513,7 +513,7 @@ pub mod v3_x {
         pub user_interaction: Option<UserInteractionType>,
         #[serde(rename = "vectorString")]
         pub vector_string: String,
-        #[doc = " CVSS Version"]
+        #[doc = "CVSS Version"]
         pub version: String,
     }
 }
@@ -696,7 +696,7 @@ pub mod v2 {
         pub temporal_score: Option<ScoreType>,
         #[serde(rename = "vectorString")]
         pub vector_string: String,
-        #[doc = " CVSS Version"]
+        #[doc = "CVSS Version"]
         pub version: String,
     }
 }

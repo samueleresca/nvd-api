@@ -6,26 +6,24 @@ use std::fmt;
 use crate::common::{RequestExecutor, ASSIGNER, CVE_API_BASE_URL, DELIMITER};
 use uuid::Uuid;
 
-use nvd_models::cpe::Response;
+use nvd_models::cpe_match::Response;
 
-pub struct CPERequest {
+pub struct CPEMatchRequest {
     http_client: reqwest::Client,
     api_key: Option<String>,
     base_url: String,
 
-    cpe_name_id: Option<String>,
-    cpe_match_string: Option<String>,
-    keyword_exact_match: Option<bool>,
-    keyword_search: Option<String>,
+    cve_id: Option<String>,
     last_mod_start_date: Option<DateTime<Utc>>,
     last_mod_end_date: Option<DateTime<Utc>>,
     match_criteria_id: Option<Uuid>,
+    match_string_search: Option<String>,
     result_per_page: Option<u32>,
     start_index: Option<u32>,
 }
 
 #[async_trait]
-impl RequestExecutor<Response> for CPERequest {
+impl RequestExecutor<Response> for CPEMatchRequest {
     fn get_base_url(&self) -> &String {
         &self.base_url
     }
@@ -39,20 +37,17 @@ impl RequestExecutor<Response> for CPERequest {
     }
 }
 
-impl CPERequest {
+impl CPEMatchRequest {
     pub fn create(http_client: reqwest::Client) -> Self {
         Self {
             http_client,
             base_url: CVE_API_BASE_URL.to_owned(),
             api_key: None,
-
-            cpe_name_id: None,
-            cpe_match_string: None,
-            keyword_exact_match: None,
-            keyword_search: None,
+            cve_id: None,
             last_mod_start_date: None,
             last_mod_end_date: None,
             match_criteria_id: None,
+            match_string_search: None,
             result_per_page: None,
             start_index: None,
         }
@@ -68,19 +63,13 @@ impl CPERequest {
         self
     }
 
-    pub fn with_cpe_name_id(mut self, cpe_name_id: String) -> Self {
-        self.cpe_name_id = Some(cpe_name_id);
+    pub fn with_cve_id(mut self, cve_id: String) -> Self {
+        self.cve_id = Some(cve_id);
         self
     }
 
-    pub fn with_cpe_match_string(mut self, cpe_match_string: String) -> Self {
-        self.cpe_match_string = Some(cpe_match_string);
-        self
-    }
-
-    pub fn with_keyword(mut self, keyword_search: String, exact_match: bool) -> Self {
-        self.keyword_exact_match = if exact_match { Some(true) } else { None };
-        self.keyword_search = Some(keyword_search);
+    pub fn with_match_string_search(mut self, match_string_search: String) -> Self {
+        self.match_string_search = Some(match_string_search);
         self
     }
 
@@ -110,7 +99,7 @@ impl CPERequest {
     }
 }
 
-impl fmt::Display for CPERequest {
+impl fmt::Display for CPEMatchRequest {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         let mut str: String = String::new();
 
@@ -127,21 +116,7 @@ impl fmt::Display for CPERequest {
             };
         }
 
-        fn add_bool_field(dest: &mut String, field_value: Option<&bool>, field_name: &str) {
-            if field_value.is_some() {
-                dest.push_str(field_name);
-                dest.push_str(DELIMITER);
-            };
-        }
-
-        add_field(&mut str, self.cpe_name_id.as_ref(), "cpeNameId");
-        add_field(&mut str, self.cpe_match_string.as_ref(), "cpeMatchString");
-        add_bool_field(
-            &mut str,
-            self.keyword_exact_match.as_ref(),
-            "keywordExactMatch",
-        );
-        add_field(&mut str, self.keyword_search.as_ref(), "keywordSearch");
+        add_field(&mut str, self.cve_id.as_ref(), "cveId");
         add_field(
             &mut str,
             self.last_mod_start_date.map(|d| d.to_rfc3339()).as_ref(),
@@ -153,6 +128,11 @@ impl fmt::Display for CPERequest {
             "lastModEndDate",
         );
         add_field(&mut str, self.match_criteria_id.as_ref(), "matchCriteriaId");
+        add_field(
+            &mut str,
+            self.match_string_search.as_ref(),
+            "matchStringSearch",
+        );
         add_field(&mut str, self.result_per_page.as_ref(), "resultsPerPage");
         add_field(&mut str, self.start_index.as_ref(), "startIndex");
 
@@ -175,35 +155,32 @@ mod tests {
     use super::*;
 
     #[test]
-    fn cpe_request_encoding_works_when_empty() {
-        let result = CPERequest::create(reqwest::Client::new()).to_string();
+    fn cpe_match_request_encoding_works_when_empty() {
+        let result = CPEMatchRequest::create(reqwest::Client::new()).to_string();
         assert_eq!("", result)
     }
 
     #[test]
-    fn cpe_request_encoding_works() {
-        let result = CPERequest::create(reqwest::Client::new())
-            .with_cpe_name_id("Test".to_owned())
-            .with_cpe_match_string("Test".to_owned())
-            .with_keyword("keyword test".to_owned(), true)
-            .with_match_criteria_id(Uuid::nil())
+    fn cpe_match_request_encoding_works() {
+        let result = CPEMatchRequest::create(reqwest::Client::new())
+            .with_cve_id("Test".to_owned())
             .with_last_modified_date_range(
                 Utc.with_ymd_and_hms(2023, 11, 12, 0, 0, 0).unwrap(),
                 Utc.with_ymd_and_hms(2023, 11, 14, 0, 0, 0).unwrap(),
             )
+            .with_match_criteria_id(Uuid::nil())
+            .with_match_string_search("matchStringSearch".to_owned())
             .with_start_index(1)
             .with_result_per_page(4)
             .to_string();
 
         assert_eq!(
             "\
-        cpeNameId=Test\
-        &cpeMatchString=Test\
-        &keywordExactMatch\
-        &keywordSearch=keyword test\
+        cveId=Test\
         &lastModStartDate=2023-11-12T00:00:00+00:00\
         &lastModEndDate=2023-11-14T00:00:00+00:00\
         &matchCriteriaId=00000000-0000-0000-0000-000000000000\
+        &matchStringSearch=matchStringSearch\
         &resultsPerPage=4\
         &startIndex=1\
         ",
@@ -212,10 +189,10 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn cpe_request_execute_and_deserialize_correctly() {
+    async fn cpe_match_request_execute_and_deserialize_correctly() {
         // Arrange
         let mock_server = MockServer::start().await;
-        let test_data: String = fs::read_to_string("src/test_data/cpe.json").unwrap();
+        let test_data: String = fs::read_to_string("src/test_data/cpe_match.json").unwrap();
 
         Mock::given(any())
             .respond_with(ResponseTemplate::new(200).set_body_string(test_data))
@@ -224,15 +201,11 @@ mod tests {
             .await;
 
         // Act
-        let result = CPERequest::create(reqwest::Client::new())
+        let result = CPEMatchRequest::create(reqwest::Client::new())
             .override_base_url(mock_server.uri().to_string())
-            .with_match_criteria_id(
-                Uuid::parse_str("36FBCF0F-8CEE-474C-8A04-5075AF53FAF4").unwrap(),
-            )
             .execute()
             .await;
-
         // Assert
-        assert_eq!(result.ok().map(|r| r.products.len()), Some(1));
+        assert_eq!(result.ok().map(|r| r.match_strings.len()), Some(1));
     }
 }

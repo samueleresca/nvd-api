@@ -45,7 +45,7 @@ pub struct DefCpeCpe {
 pub struct DefCpe {
     pub cpe: DefCpeCpe,
 }
-#[doc = " Internet resource for CPE"]
+#[doc = "Internet resource for CPE"]
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 #[serde(rename = "defReference")]
 #[serde(deny_unknown_fields)]
@@ -56,7 +56,7 @@ pub struct DefReference {
     #[serde(rename = "type")]
     pub type_: Option<String>,
 }
-#[doc = " Human readable title for CPE"]
+#[doc = "Human readable title for CPE"]
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize)]
 #[serde(rename = "defTitle")]
 #[serde(deny_unknown_fields)]
@@ -68,7 +68,7 @@ pub struct DefTitle {
 #[serde(deny_unknown_fields)]
 pub struct Response {
     pub format: String,
-    #[doc = " NVD feed array of CPE"]
+    #[doc = "NVD feed array of CPE"]
     pub products: Vec<DefCpe>,
     #[serde(rename = "resultsPerPage")]
     pub results_per_page: i64,
