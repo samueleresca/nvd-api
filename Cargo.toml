@@ -1,5 +1,5 @@
 [package]
-name = "rsnvd"
+name = "nvd-api"
 version = "0.1.0"
 authors = ["Samuele Resca <samuele.resca@gmail.com>"]
 edition = "2021"

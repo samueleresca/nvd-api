@@ -4,7 +4,7 @@ use nvd_models::cve::Response;
 use reqwest::Client;
 use std::fmt;
 
-use crate::common::{RequestExecutor, ASSIGNER, CVE_API_BASE_URL, DELIMITER};
+use crate::{RequestExecutor, ASSIGNER, BASE_URL, DELIMITER};
 
 pub enum VersionType {
     Including,
@@ -73,7 +73,7 @@ impl CVERequest {
     pub fn create(http_client: reqwest::Client) -> Self {
         Self {
             http_client,
-            base_url: CVE_API_BASE_URL.to_owned(),
+            base_url: BASE_URL.to_owned() + "cves/2.0",
             api_key: None,
             cpe_name: None,
             cve_id: None,

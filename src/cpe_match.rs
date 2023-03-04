@@ -3,7 +3,7 @@ use chrono::{DateTime, Utc};
 use reqwest::Client;
 use std::fmt;
 
-use crate::common::{RequestExecutor, ASSIGNER, CVE_API_BASE_URL, DELIMITER};
+use crate::{RequestExecutor, ASSIGNER, BASE_URL, DELIMITER};
 use uuid::Uuid;
 
 use nvd_models::cpe_match::Response;
@@ -41,7 +41,7 @@ impl CPEMatchRequest {
     pub fn create(http_client: reqwest::Client) -> Self {
         Self {
             http_client,
-            base_url: CVE_API_BASE_URL.to_owned(),
+            base_url: BASE_URL.to_owned() + "cpematch/2.0",
             api_key: None,
             cve_id: None,
             last_mod_start_date: None,
