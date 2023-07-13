@@ -10,7 +10,13 @@ pub(crate) const ASSIGNER: &str = "=";
 pub(crate) const BASE_URL: &str = "https://services.nvd.nist.gov/rest/json/";
 // https://url.spec.whatwg.org/
 #[allow(dead_code)]
-const FRAGEMENT: &AsciiSet = &CONTROLS.add(b' ').add(b'"').add(b'<').add(b'>').add(b'#');
+const FRAGEMENT: &AsciiSet = &CONTROLS
+    .add(b' ')
+    .add(b'"')
+    .add(b'<')
+    .add(b'>')
+    .add(b'#')
+    .add(b'+');
 
 #[async_trait]
 pub trait RequestExecutor<T>
@@ -24,8 +30,7 @@ where
 
     async fn execute(&self) -> Result<T, reqwest::Error> {
         let data = &self.to_string();
-        let encoder = utf8_percent_encode(data, FRAGEMENT);
-        let encoded_data: String = encoder.collect();
+        let encoded_data: String = utf8_percent_encode(data, FRAGEMENT).to_string();
         let full_url = self.get_base_url().to_owned() + "?" + &encoded_data;
 
         let mut builder = self.get_http_client().get(full_url);
