@@ -10,5 +10,5 @@ async fn integration_cpe_match_request_execute_and_deserialize_correctly() {
         .await;
 
     // Assert
-    assert_eq!(result.ok().map(|r| r.match_strings.len()), Some(6));
+    assert_eq!(result.ok().map(|r| r.total_results), Some(6));
 }
