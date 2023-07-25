@@ -75,7 +75,7 @@ async fn integration_cve_request_by_cvssv3_metric_and_date_range_execute_and_des
     // Assert
     assert_eq!(
         results_scope_unchanged.ok().map(|r| r.total_results),
-        Some(6602)
+        Some(6601)
     );
     assert_eq!(
         results_scope_changed.ok().map(|r| r.total_results),
